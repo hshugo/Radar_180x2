@@ -23,7 +23,9 @@ public class RadarView extends View {
 
     float alpha = 0;
     Point latestPoint[] = new Point[POINT_ARRAY_SIZE];
+    Point latestPoint2[] = new Point[POINT_ARRAY_SIZE];
     Paint latestPaint[] = new Paint[POINT_ARRAY_SIZE];
+    Paint latestPaint2[] = new Paint[POINT_ARRAY_SIZE];
 
     public RadarView(Context context) {
         this(context, null);
@@ -40,13 +42,16 @@ public class RadarView extends View {
         localPaint.setColor(Color.GREEN);
         localPaint.setAntiAlias(true);
         localPaint.setStyle(Paint.Style.STROKE);
-        localPaint.setStrokeWidth(1.0F);
+        localPaint.setStrokeWidth(2.0F);
         localPaint.setAlpha(0);
 
         int alpha_step = 255 / POINT_ARRAY_SIZE;
         for (int i=0; i < latestPaint.length; i++) {
             latestPaint[i] = new Paint(localPaint);
             latestPaint[i].setAlpha(255 - (i* alpha_step));
+
+            latestPaint2[i] = new Paint(localPaint);
+            latestPaint2[i].setAlpha(255 - (i* alpha_step));
         }
     }
 
@@ -92,7 +97,7 @@ public class RadarView extends View {
         int j = i - 1;
         Paint localPaint = latestPaint[0]; // GREEN
 
-        if (showCircles) {
+        if (this.showCircles) {
             canvas.drawCircle(i, i, j, localPaint);
             canvas.drawCircle(i, i, j, localPaint);
             canvas.drawCircle(i, i, j * 3 / 4, localPaint);
@@ -101,24 +106,49 @@ public class RadarView extends View {
         }
 
         alpha -= 0.5;
-        if (alpha < -360) alpha = 0;
+        if (alpha < -180) alpha = 0;
         double angle = Math.toRadians(alpha);
         int offsetX =  (int) (i + (float)(i * Math.cos(angle)));
         int offsetY = (int) (i - (float)(i * Math.sin(angle)));
+        int offsetY2 = (int) (i + (float)(i * Math.sin(angle)));
 
         latestPoint[0]= new Point(offsetX, offsetY);
+        latestPoint2[0]= new Point(offsetX, offsetY2);
 
         for (int x=POINT_ARRAY_SIZE-1; x > 0; x--) {
             latestPoint[x] = latestPoint[x-1];
+            latestPoint2[x] = latestPoint2[x-1];
         }
 
+        /*Setear circulo*/
+        int xc = 730;
+        int yc = 430;
+        int radiusC = 10;
+        Paint paintC = new Paint();
+        paintC.setStyle(Paint.Style.FILL);
+        // Use Color.parseColor to define HTML colors
+        paintC.setColor(Color.GREEN);
+        canvas.drawCircle(xc / 2, yc / 2, radiusC, paintC);
+
+        /*
+        Paint localPaint = new Paint();
+        localPaint.setColor(Color.GREEN);
+        localPaint.setAntiAlias(true);
+        localPaint.setStyle(Paint.Style.STROKE);
+        localPaint.setStrokeWidth(2.0F);
+        localPaint.setAlpha(0)
+        */
 
 
         int lines = 0;
         for (int x = 0; x < POINT_ARRAY_SIZE; x++) {
             Point point = latestPoint[x];
+            Point point2 = latestPoint2[x];
             if (point != null) {
+
+
                 canvas.drawLine(i, i, point.x, point.y, latestPaint[x]);
+                canvas.drawLine(i, i, point2.x, point2.y, latestPaint2[x]);
             }
         }
 
@@ -126,7 +156,7 @@ public class RadarView extends View {
         lines = 0;
         for (Point p : latestPoint) if (p != null) lines++;
 
-        boolean debug = false;
+        boolean debug = true;
         if (debug) {
             StringBuilder sb = new StringBuilder(" >> ");
             for (Point p : latestPoint) {
