@@ -2,19 +2,19 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "frusso.radartest"
         minSdkVersion 18
-        targetSdkVersion 20
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //runProguard false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
