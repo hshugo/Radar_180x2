@@ -111,6 +111,8 @@ public class RadarView extends View {
         int offsetX =  (int) (i + (float)(i * Math.cos(angle)));
         int offsetY = (int) (i - (float)(i * Math.sin(angle)));
         int offsetY2 = (int) (i + (float)(i * Math.sin(angle)));
+        int offsetz = (int) (i - (float)(i * Math.tan(angle)));
+        int offsetz2 = (int) (i + (float)(i * Math.tan(angle)));
 
         latestPoint[0]= new Point(offsetX, offsetY);
         latestPoint2[0]= new Point(offsetX, offsetY2);
@@ -120,32 +122,74 @@ public class RadarView extends View {
             latestPoint2[x] = latestPoint2[x-1];
         }
 
-        /*Setear circulo*/
-        int xc = 730;
-        int yc = 430;
-        int radiusC = 10;
-        Paint paintC = new Paint();
-        paintC.setStyle(Paint.Style.FILL);
-        // Use Color.parseColor to define HTML colors
-        paintC.setColor(Color.GREEN);
-        canvas.drawCircle(xc / 2, yc / 2, radiusC, paintC);
-
-        /*
-        Paint localPaint = new Paint();
-        localPaint.setColor(Color.GREEN);
-        localPaint.setAntiAlias(true);
-        localPaint.setStyle(Paint.Style.STROKE);
-        localPaint.setStrokeWidth(2.0F);
-        localPaint.setAlpha(0)
-        */
-
-
         int lines = 0;
         for (int x = 0; x < POINT_ARRAY_SIZE; x++) {
             Point point = latestPoint[x];
             Point point2 = latestPoint2[x];
             if (point != null) {
 
+                /*Cuadrantes:*/
+
+                double angulo=30;
+                double angulo_aplicado=0;
+                int hipotenusa=100;
+                int opuesto=0;
+                int sensor=0; // cero es el que apunta al frente
+                int cuadrant1=0, cuadrant2=0, cuadrant3=0, cuadrant4=0;
+        /*Coordenada 1er Cuadrante:*/
+        /*Setear circulo*/
+                int xc = i; // eje x
+                int yc = j ; // eje y
+
+                int radiusC = 10;
+                Paint paintC = new Paint();
+                paintC.setStyle(Paint.Style.FILL);
+                paintC.setColor(Color.GREEN);
+
+
+                if( sensor == 0 ) {
+
+                    if (angulo < 90 ) {
+                        angulo_aplicado = angulo;
+                        cuadrant1=1;
+                    } else if (angulo < 180) {
+                        angulo_aplicado = angulo - 90;
+                        cuadrant2=1;
+                    }
+                }else{
+                    //segundo sensor
+                    if (angulo < 90) {
+                        angulo_aplicado = angulo;
+                        cuadrant3=1;
+                    } else if (angulo < 180) {
+                        angulo_aplicado = angulo - 90;
+                        cuadrant4=1;
+                    }
+                }
+
+                int offsetXC=0;
+                int offsetYC=0;
+                if(cuadrant1==1) {
+                    offsetXC = (int) (i + (float) (hipotenusa * Math.cos(Math.toRadians(angulo_aplicado)) ));
+                    offsetYC = (int) (i - (float) (hipotenusa *  Math.sin(Math.toRadians(angulo_aplicado)) ));
+                    if ( offsetY < offsetYC ) {
+                        canvas.drawCircle(offsetXC, offsetYC, radiusC, paintC);
+                    }
+                }
+                if(cuadrant2==1) {
+                    offsetXC = (int) (i - (double) (hipotenusa * (double)Math.cos(Math.toRadians(angulo_aplicado)) ));
+                    offsetYC = (int) (i - (double) (hipotenusa * (double)Math.sin(Math.toRadians(angulo_aplicado)) ));
+                }
+                if(cuadrant3==1) {
+                    offsetXC = (int) (i - (double) (hipotenusa * (double)Math.cos(Math.toRadians(angulo_aplicado)) ));
+                    offsetYC = (int) (i + (double) (hipotenusa * (double)Math.sin(Math.toRadians(angulo_aplicado)) ));
+                }
+                if(cuadrant2==1) {
+                    offsetXC = (int) (i + (double) (hipotenusa * (double)Math.cos(Math.toRadians(angulo_aplicado)) ));
+                    offsetYC = (int) (i + (double) (hipotenusa * (double)Math.sin(Math.toRadians(angulo_aplicado)) ));
+                }
+
+                /*Coordenada  por Cuadrante:*/
 
                 canvas.drawLine(i, i, point.x, point.y, latestPaint[x]);
                 canvas.drawLine(i, i, point2.x, point2.y, latestPaint2[x]);
