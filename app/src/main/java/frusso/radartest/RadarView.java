@@ -10,6 +10,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import frusso.radartest.RadarCircle;
+import java.util.ArrayList;
+
 /**
  * Created by jfabrix101 on 16/07/14.
  */
@@ -17,7 +20,8 @@ public class RadarView extends View {
 
     private final String LOG = "RadarView";
     private final int POINT_ARRAY_SIZE = 25;
-
+    private ArrayList<RadarCircle> circles = new ArrayList<RadarCircle>();
+    private int pasada=0;
     private int fps = 100;
     private boolean showCircles = true;
 
@@ -42,7 +46,7 @@ public class RadarView extends View {
         localPaint.setColor(Color.GREEN);
         localPaint.setAntiAlias(true);
         localPaint.setStyle(Paint.Style.STROKE);
-        localPaint.setStrokeWidth(2.0F);
+        localPaint.setStrokeWidth(3.0F);
         localPaint.setAlpha(0);
 
         int alpha_step = 255 / POINT_ARRAY_SIZE;
@@ -89,8 +93,6 @@ public class RadarView extends View {
         int height = getHeight();
 
         int r = Math.min(width, height);
-
-
         //canvas.drawRect(0, 0, getWidth(), getHeight(), localPaint);
 
         int i = r / 2;
@@ -105,15 +107,26 @@ public class RadarView extends View {
             canvas.drawCircle(i, i, j >> 2, localPaint);
         }
 
-        alpha -= 0.5;
-        if (alpha < -180) alpha = 0;
+        if(pasada==0) {
+            pasada=1;
+            circles.add(new RadarCircle(30, 100, 0));
+            circles.add(new RadarCircle(120, 100, 0));
+            circles.add(new RadarCircle(150, 100, 0));
+            circles.add(new RadarCircle(30, 100, 1));
+            circles.add(new RadarCircle(120, 100, 1));
+        }
+
+        alpha += 0.5;
+
+        if (alpha > 180) alpha = 0;
         double angle = Math.toRadians(alpha);
         int offsetX =  (int) (i + (float)(i * Math.cos(angle)));
         int offsetY = (int) (i - (float)(i * Math.sin(angle)));
+        int offsetX2 =  (int) (i - (float)(i * Math.cos(angle)));
         int offsetY2 = (int) (i + (float)(i * Math.sin(angle)));
 
         latestPoint[0]= new Point(offsetX, offsetY);
-        latestPoint2[0]= new Point(offsetX, offsetY2);
+        latestPoint2[0]= new Point(offsetX2, offsetY2);
 
         for (int x=POINT_ARRAY_SIZE-1; x > 0; x--) {
             latestPoint[x] = latestPoint[x-1];
@@ -125,94 +138,7 @@ public class RadarView extends View {
             Point point = latestPoint[x];
             Point point2 = latestPoint2[x];
             if (point != null) {
-
-                /*Cuadrantes:*/
-
-                double angulo=30;
-                double angulo_aplicado=0;
-                int hipotenusa=100;
-                int opuesto=0;
-                int sensor=0; // cero es el que apunta al frente
-                int cuadrant1=0, cuadrant2=0, cuadrant3=0, cuadrant4=0;
-                /*Coordenada 1er Cuadrante:*/
-                /*Setear circulo*/
-                int xc = i; // eje x
-                int yc = j ; // eje y
-
-                int radiusC = 10;
-                Paint paintC = new Paint();
-                paintC.setStyle(Paint.Style.FILL);
-                paintC.setColor(Color.GREEN);
-
-
-                if( sensor == 0 ) {
-
-                    if (angulo < 90 ) {
-                        angulo_aplicado = angulo;
-                        cuadrant1=1;
-                    } else if (angulo < 180) {
-                        angulo_aplicado = angulo - 90;
-                        cuadrant2=1;
-                    }
-                }else{
-                    //segundo sensor
-                    if (angulo > 90) {
-                        angulo_aplicado = angulo;
-                        cuadrant3=1;
-                    } else if (angulo < 90) {
-                        angulo_aplicado = angulo - 90;
-                        cuadrant4=1;
-                    }
-                }
-
-                int offsetXC=0;
-                int offsetYC=0;
-                if(cuadrant1==1) {
-
-                    double angle2 = Math.toRadians(angulo_aplicado);
-                    double tita2 = angle2;
-                    double tita1 = 0;
-
-                    if(offsetX>0) {
-                        tita1 = Math.atan(offsetY / offsetX);
-                    }
-
-                    offsetXC = (int) (hipotenusa * Math.cos(angle2) );
-                    offsetYC = (int) (hipotenusa *  Math.sin(angle2) );
-
-                    if ( tita1  > tita2 && (tita1-tita2)>0.25 && (tita1-tita2)<0.50 ) {
-                        canvas.drawCircle(i+offsetXC, j-offsetYC, radiusC, paintC);
-                    }
-                }
-
-
-                if(cuadrant2==1) {
-                    double angle2 = Math.toRadians(angulo_aplicado);
-                    double tita2 = angle2;
-                    double tita1 = 0;
-
-                    if(offsetX>0) {
-                        tita1 = Math.atan(offsetY / offsetX);
-                    }
-
-                    offsetXC = (int) (hipotenusa * Math.cos(angle2) );
-                    offsetYC = (int) (hipotenusa *  Math.sin(angle2) );
-
-                    if ( tita1  > tita2 && (tita1-tita2)>0.25 && (tita1-tita2)<0.50 ) {
-                        canvas.drawCircle(i+offsetXC, j-offsetYC, radiusC, paintC);
-                    }
-                }
-                if(cuadrant3==1) {
-                    offsetXC = (int) (i - (double) (hipotenusa * (double)Math.cos(Math.toRadians(angulo_aplicado)) ));
-                    offsetYC = (int) (i + (double) (hipotenusa * (double)Math.sin(Math.toRadians(angulo_aplicado)) ));
-                }
-                if(cuadrant2==1) {
-                    offsetXC = (int) (i + (double) (hipotenusa * (double)Math.cos(Math.toRadians(angulo_aplicado)) ));
-                    offsetYC = (int) (i + (double) (hipotenusa * (double)Math.sin(Math.toRadians(angulo_aplicado)) ));
-                }
-
-                /*Coordenada  por Cuadrante:*/
-
+                drawCircle(i, j, angle, canvas);
                 canvas.drawLine(i, i, point.x, point.y, latestPaint[x]);
                 canvas.drawLine(i, i, point2.x, point2.y, latestPaint2[x]);
             }
@@ -222,20 +148,41 @@ public class RadarView extends View {
         lines = 0;
         for (Point p : latestPoint) if (p != null) lines++;
 
-        boolean debug = true;
-        if (debug) {
-            StringBuilder sb = new StringBuilder(" >> ");
-            for (Point p : latestPoint) {
-                if (p != null) sb.append(" (" + p.x + "x" + p.y + ")");
-            }
-
-            Log.d(LOG, sb.toString());
-            //  " - R:" + r + ", i=" + i +
-            //  " - Size: " + width + "x" + height +
-            //  " - Angle: " + angle +
-            //  " - Offset: " + offsetX + "," + offsetY);
-        }
 
     }
 
+    public void drawCircle(int i, int j,double angle, Canvas canvas ){
+
+        /*Cuadrantes:*/
+        float hipotenusa=0;
+
+         /*Setear circulo*/
+        int radiusC = 15;
+        Paint paintC = new Paint();
+        paintC.setStyle(Paint.Style.FILL);
+        paintC.setColor(Color.GREEN);
+        int offsetXC=0;
+        int offsetYC=0;
+        double angleCircle=0;
+        for (RadarCircle circle: circles ) {
+            hipotenusa=circle.getDistance();
+            angleCircle = Math.toRadians(circle.getAngle());
+            offsetXC = (int) (hipotenusa * Math.cos(angleCircle ) );
+            offsetYC = (int) (hipotenusa * Math.sin(angleCircle ) );
+
+            if( circle.getSensor() == 0 ) {
+                //sensor 1
+                if ( angle  > angleCircle && (angle-angleCircle)>0.25 && (angle-angleCircle)<0.50 ) {
+                    canvas.drawCircle(i+offsetXC, j-offsetYC, radiusC, paintC);
+                }
+            }else{
+                //sensor 2
+                if ( angle  > angleCircle && (angle-angleCircle)>0.25 && (angle-angleCircle)<0.50 ) {
+                    canvas.drawCircle(i-offsetXC, j+offsetYC, radiusC, paintC);
+                }
+            }
+
+        }
+
+    }
 }
