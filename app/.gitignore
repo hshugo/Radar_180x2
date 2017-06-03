@@ -1,1 +1,11 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store
 /build
+.idea/libraries/android_android_20.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+app/app.iml
+Radar_180x2.iml
