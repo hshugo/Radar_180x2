@@ -43,7 +43,7 @@ public class RadarView extends View {
         super(context, attrs, defStyleAttr);
 
         Paint localPaint = new Paint();
-        localPaint.setColor(Color.BLACK);
+        localPaint.setColor(Color.GREEN);
         localPaint.setAntiAlias(true);
         localPaint.setStyle(Paint.Style.STROKE);
         localPaint.setStrokeWidth(3.0F);
@@ -160,7 +160,7 @@ public class RadarView extends View {
         int radiusC = 20;
         Paint paintC = new Paint();
         paintC.setStyle(Paint.Style.FILL);
-        paintC.setColor(Color.BLACK);
+        paintC.setColor(Color.GREEN);
         int offsetXC=0;
         int offsetYC=0;
         double angleCircle=0;

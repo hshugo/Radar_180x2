@@ -4,28 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/malvinasargentinas"
-    >
+    android:background="@android:color/black">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"
-        android:onClick="startAniamtion"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
 
-    <frusso.radartest.RadarView
-        android:id="@+id/radarView"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:layout_gravity="center_horizontal"
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="startAniamtion"
+                android:text="start"
+                android:textColor="#FFFFFF" />
 
-        />
+            <frusso.radartest.RadarView
+                android:id="@+id/radarView"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/southamerica"
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="stop"
-        android:onClick="stopAnimation"/>
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="stopAnimation"
+                android:text="stop"
+                android:textColor="#FFFFFF"
+                android:visibility="invisible" />
 
 
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
